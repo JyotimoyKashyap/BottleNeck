@@ -45,15 +45,6 @@
       font-weight: 600;
       color: #0056b3; /* A clearer color */
     }
-    .duration {
-      font-size: 0.85rem;
-      color: #555;
-      font-weight: 500;
-      background-color: #f4f7fa;
-      padding: 3px 8px;
-      border-radius: 6px;
-      border: 1px solid #e8eef3;
-    }
     /* End new styles */
 
     .desc {
@@ -87,22 +78,6 @@
         return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
       };
 
-      // --- NEW: Helper function to format duration (e.g., (1h 15m)) ---
-      function formatDuration(ms) {
-        if (ms < 0) ms = 0;
-        const totalMinutes = Math.floor(ms / 60000);
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-        
-        if (hours > 0) {
-          return `(${hours}h ${minutes}m)`;
-        }
-        if (minutes > 0) {
-          return `(${minutes}m)`;
-        }
-        return `(<1m)`;
-      }
-
       // --- MODIFIED: Renders the logs with time blocks ---
       function renderLogs(entries) {
         logList.innerHTML = '';
@@ -114,40 +89,25 @@
 
         noLogsMsg.style.display = 'none';
 
-        // Sort entries by timestamp (OLDEST first) to calculate durations
-        entries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        // Sort entries by timestamp (NEWEST first)
+        entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         // Loop through all entries to build the blocks
-        for (let i = 0; i < entries.length; i++) {
-          const currentEntry = entries[i];
-          const nextEntry = entries[i + 1]; // This will be undefined for the last item
-
-          const startTime = new Date(currentEntry.timestamp);
-          
-          // The end time is the *next* entry's start time,
-          // or "now" if it's the last entry.
-          const endTime = nextEntry ? new Date(nextEntry.timestamp) : new Date();
-
-          const durationMs = endTime - startTime;
+        for (const entry of entries) {
+          const startTime = new Date(entry.timestamp);
 
           const li = document.createElement('li');
           
-          const timeRangeStr = nextEntry 
-            ? `${formatTime(startTime)} &ndash; ${formatTime(endTime)}`
-            : `${formatTime(startTime)} &ndash; Now`;
-          
-          const durationStr = formatDuration(durationMs);
+          const timeStr = formatTime(startTime);
           
           li.innerHTML = `
             <div class="time-header">
-              <span class="time-range">${timeRangeStr}</span>
-              <span class="duration">${durationStr}</span>
+              <span class="time-range">${timeStr}</span>
             </div>
-            <span class="desc">${currentEntry.description}</span>
+            <span class="desc">${entry.description}</span>
           `;
           
-          // Prepend to show the newest (current) task at the top
-          logList.prepend(li);
+          logList.appendChild(li);
         }
       }
 

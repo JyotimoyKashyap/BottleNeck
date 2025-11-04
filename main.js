@@ -87,13 +87,13 @@ function createMainWindow() {
 }
 
 function createPopupWindow() {
-  const { width } = screen.getPrimaryDisplay().workAreaSize;
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   
   popupWindow = new BrowserWindow({
     width: 500,
     height: 80, // Adjusted height for a single input
     x: Math.floor((width - 500) / 2),
-    y: 100, 
+    y: Math.floor((height - 80) / 2),
     frame: false,
     alwaysOnTop: true,
     skipTaskbar: true,

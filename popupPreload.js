@@ -6,6 +6,6 @@ contextBridge.exposeInMainWorld('api', {
   sendLog: (message) => ipcRenderer.invoke('save-log', message),
   
   // A function to tell the main process to hide the popup
-  hideWindow: () => ipcRenderer.send('hide-popup')
+  hideWindow: () => ipcRenderer.send('hide-popup'),
 });
 
