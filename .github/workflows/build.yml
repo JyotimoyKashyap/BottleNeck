@@ -42,4 +42,4 @@ jobs:
         with:
           name: WorkLogger-Windows-Installer
           # This path comes from your 'package.json' config
-          path: out/make/squirrel.windows/x64/WorkLogger-Setup.exe
+          path: out/make
