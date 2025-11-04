@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Daily Work Log</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+      margin: 0;
+      padding: 30px;
+      background-color: #f7f9fc;
+      color: #333;
+    }
+    h1 {
+      margin-top: 0;
+      font-weight: 600;
+      color: #222;
+    }
+    #log-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    #log-list li {
+      background-color: #fff;
+      border: 1px solid #e8eef3;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+    }
+    
+    /* New styles for the time block header */
+    .time-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .time-range {
+      display: block;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0056b3; /* A clearer color */
+    }
+    .duration {
+      font-size: 0.85rem;
+      color: #555;
+      font-weight: 500;
+      background-color: #f4f7fa;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #e8eef3;
+    }
+    /* End new styles */
+
+    .desc {
+      font-size: 1.1rem;
+      color: #333;
+      padding-left: 2px;
+    }
+    #no-logs {
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>Today's Work Log</h1>
+  
+  <ul id="log-list">
+    <!-- Log entries will be inserted here by JavaScript -->
+  </ul>
+  <p id="no-logs" style="display: none;">No logs saved for today yet.</p>
+
+  <script>
+    // --- Move all logic inside the DOMContentLoaded listener ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const logList = document.getElementById('log-list');
+      const noLogsMsg = document.getElementById('no-logs');
+
+      // --- NEW: Helper function to format time (e.g., 3:05 PM) ---
+      const formatTime = (date) => {
+        if (!date) return '';
+        return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      };
+
+      // --- NEW: Helper function to format duration (e.g., (1h 15m)) ---
+      function formatDuration(ms) {
+        if (ms < 0) ms = 0;
+        const totalMinutes = Math.floor(ms / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        
+        if (hours > 0) {
+          return `(${hours}h ${minutes}m)`;
+        }
+        if (minutes > 0) {
+          return `(${minutes}m)`;
+        }
+        return `(<1m)`;
+      }
+
+      // --- MODIFIED: Renders the logs with time blocks ---
+      function renderLogs(entries) {
+        logList.innerHTML = '';
+
+        if (!entries || entries.length === 0) {
+          noLogsMsg.style.display = 'block';
+          return;
+        }
+
+        noLogsMsg.style.display = 'none';
+
+        // Sort entries by timestamp (OLDEST first) to calculate durations
+        entries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+        // Loop through all entries to build the blocks
+        for (let i = 0; i < entries.length; i++) {
+          const currentEntry = entries[i];
+          const nextEntry = entries[i + 1]; // This will be undefined for the last item
+
+          const startTime = new Date(currentEntry.timestamp);
+          
+          // The end time is the *next* entry's start time,
+          // or "now" if it's the last entry.
+          const endTime = nextEntry ? new Date(nextEntry.timestamp) : new Date();
+
+          const durationMs = endTime - startTime;
+
+          const li = document.createElement('li');
+          
+          const timeRangeStr = nextEntry 
+            ? `${formatTime(startTime)} &ndash; ${formatTime(endTime)}`
+            : `${formatTime(startTime)} &ndash; Now`;
+          
+          const durationStr = formatDuration(durationMs);
+          
+          li.innerHTML = `
+            <div class="time-header">
+              <span class="time-range">${timeRangeStr}</span>
+              <span class="duration">${durationStr}</span>
+            </div>
+            <span class="desc">${currentEntry.description}</span>
+          `;
+          
+          // Prepend to show the newest (current) task at the top
+          logList.prepend(li);
+        }
+      }
+
+      // --- (This part is unchanged) ---
+
+      // Function to fetch logs from the main process
+      async function loadLogs() {
+        // Use the preload API to get logs
+        const dayLog = await window.api.getLogs(); // { entries: [...] }
+        renderLogs(dayLog.entries);
+      }
+
+      // 1. Load logs when the window first opens
+      loadLogs();
+
+      // 2. Listen for the 'logs-updated' message from main.js
+      //    and reload the logs
+      window.api.onLogsUpdated(() => {
+        console.log('Logs updated, reloading...');
+        loadLogs();
+      });
+    });
+  </script>
+</body>
+</html>
+

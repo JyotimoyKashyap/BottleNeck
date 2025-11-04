@@ -1,0 +1,16 @@
+{
+  "name": "bottleneck",
+  "version": "1.0.0",
+  "description": "Simple work log tool with global shortcuts built with Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^39.0.0"
+  }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Log Entry</title>
+  <style>
+    body { 
+      font-family: system-ui, sans-serif; 
+      background: #fff; 
+      margin: 0; 
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #entry-box {
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 20px;
+      font-size: 1.2rem;
+      box-sizing: border-box; /* Ensures padding doesn't break layout */
+      color: #333;
+    }
+    #entry-box::placeholder {
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  
+  <input type="text" id="entry-box" placeholder="What are you working on?">
+
+  <script>
+    const entryBox = document.getElementById('entry-box');
+
+    // Focus the input box automatically when the window shows
+    window.addEventListener('focus', () => {
+      entryBox.focus();
+    });
+
+    // Listen for key presses
+    entryBox.addEventListener('keydown', async (e) => {
+      // Check if the key pressed was "Enter"
+      if (e.key === 'Enter' && entryBox.value.trim() !== '') {
+        const message = entryBox.value.trim();
+        
+        // Use the preload script's 'sendLog' function
+        await window.api.sendLog(message);
+        
+        // Clear the input and hide the window
+        entryBox.value = '';
+        window.api.hideWindow();
+      } else if (e.key === 'Escape') {
+        // Bonus: Hide on "Escape" key
+        entryBox.value = '';
+        window.api.hideWindow();
+      }
+    });
+  </script>
+
+</body>
+</html>
+
