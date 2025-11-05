@@ -99,6 +99,7 @@ jspm_packages/
 # Electron packaging
 /dist
 /release
+/out
 
 # macOS
 .DS_Store

@@ -1,12 +1,14 @@
 {
   "name": "bottleneck",
+  "productName": "BottleNeck",
   "version": "1.0.0",
   "description": "Simple work log tool with global shortcuts built with Electron",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
     "make": "electron-forge make",
-    "package": "electron-forge package"
+    "package": "electron-forge package",
+    "generate-icons": "electron-icon-builder --input=./build/icon.png --output=build"
   },
   "keywords": [],
   "author": "Jyotimoy Kashyap",
@@ -15,24 +17,56 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
     "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-dmg": "^7.10.2",
     "@electron-forge/maker-rpm": "^7.10.2",
     "@electron-forge/maker-squirrel": "^7.10.2",
     "@electron-forge/maker-zip": "^7.10.2",
     "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
     "@electron-forge/plugin-fuses": "^7.10.2",
     "@electron/fuses": "^1.8.0",
-    "electron": "^39.0.0"
+    "electron": "^39.0.0",
+    "electron-icon-builder": "^2.0.1",
+    "sharp": "^0.34.4"
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "name": "BottleNeck",
+        "icon": "./build/icons/mac/icon.icns",
+        "executableName": "bottleneck",
+        "appBundleId": "com.jyotimoykashyap.bottleneck",
+        "osxSign": {},
+        "protocols": [
+          {
+            "name": "BottleNeck Protocol",
+            "schemes": [
+              "bottleneck"
+            ]
+          }
+        ]
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "BottleNeck",
+            "iconUrl": "https://raw.githubusercontent.com/JyotimoyKashyap/BottleNeck/main/build/icons/win/icon.ico",
+            "setupIcon": "./build/icons/win/icon.ico",
             "setupExe": "bottleneck-setup.exe"
           }
+        },
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "format": "ULFO",
+            "icon": "./build/icons/mac/icon.icns"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
         }
       ]
     }
