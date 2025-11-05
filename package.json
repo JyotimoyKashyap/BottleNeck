@@ -79,7 +79,9 @@
           "config": {
             "options": {
               "icon": "./build/icons/png/512x512.png",
-              "categories": ["Utility"],
+              "categories": [
+                "Utility"
+              ],
               "maintainer": "Jyotimoy Kashyap",
               "homepage": "https://github.com/JyotimoyKashyap/BottleNeck"
             }
@@ -90,7 +92,9 @@
           "config": {
             "options": {
               "icon": "./build/icons/png/512x512.png",
-              "categories": ["Utility"],
+              "categories": [
+                "Utility"
+              ],
               "maintainer": "Jyotimoy Kashyap",
               "homepage": "https://github.com/JyotimoyKashyap/BottleNeck"
             }
