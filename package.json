@@ -14,6 +14,9 @@
   "author": "Jyotimoy Kashyap",
   "license": "ISC",
   "type": "commonjs",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  },
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
     "@electron-forge/maker-deb": "^7.10.2",
@@ -32,10 +35,9 @@
     "forge": {
       "packagerConfig": {
         "name": "BottleNeck",
-        "icon": "./build/icons/mac/icon.icns",
         "executableName": "bottleneck",
         "appBundleId": "com.jyotimoykashyap.bottleneck",
-        "osxSign": {},
+        "icon": "./build/icons/png/512x512.png",
         "protocols": [
           {
             "name": "BottleNeck Protocol",
@@ -50,28 +52,51 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "BottleNeck",
+            "authors": "Jyotimoy Kashyap",
             "iconUrl": "https://raw.githubusercontent.com/JyotimoyKashyap/BottleNeck/main/build/icons/win/icon.ico",
             "setupIcon": "./build/icons/win/icon.ico",
-            "setupExe": "bottleneck-setup.exe"
+            "loadingGif": "./build/icons/png/256x256.png"
           }
         },
         {
           "name": "@electron-forge/maker-dmg",
           "config": {
-            "format": "ULFO",
-            "icon": "./build/icons/mac/icon.icns"
+            "name": "BottleNeck",
+            "icon": "./build/icons/mac/icon.icns",
+            "background": "./build/icons/png/512x512.png"
           }
         },
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "darwin",
+            "linux",
+            "win32"
           ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "options": {
+              "icon": "./build/icons/png/512x512.png",
+              "categories": ["Utility"],
+              "maintainer": "Jyotimoy Kashyap",
+              "homepage": "https://github.com/JyotimoyKashyap/BottleNeck"
+            }
+          }
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {
+            "options": {
+              "icon": "./build/icons/png/512x512.png",
+              "categories": ["Utility"],
+              "maintainer": "Jyotimoy Kashyap",
+              "homepage": "https://github.com/JyotimoyKashyap/BottleNeck"
+            }
+          }
         }
       ]
     }
-  },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
   }
 }
