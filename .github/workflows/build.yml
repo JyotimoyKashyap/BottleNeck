@@ -1,45 +1,31 @@
-# This is a GitHub Actions workflow file.
-# It defines a job that will automatically build your Electron app.
+name: CI
 
-name: Build Electron App
-
-# Controls when the action will run.
-# This one triggers on every push to the 'main' branch.
 on:
   push:
-    branches: [ "main" ] # You can change "main" to "master" if you use that
-  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  # This job builds the Windows installer
-  build-windows:
-    # This is the key: it runs the job on a Windows machine
-    runs-on: windows-latest
+  verify:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
-      # 1. Checks out your repository code so the runner can use it
       - name: Check out code
         uses: actions/checkout@v4
 
-      # 2. Sets up the Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a recent LTS version of Node
+          node-version: '20'
           cache: 'npm'
 
-      # 3. Installs all your project's dependencies
       - name: Install dependencies
-        run: npm ci # 'ci' is faster and safer for CI than 'npm install'
+        run: npm ci
 
-      # 4. Runs your 'make' script (which will use 'maker-squirrel')
-      - name: Build Windows installer
-        run: npm run make
-
-      # 5. Uploads the finished .exe installer as an artifact
-      - name: Upload Windows Installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: WorkLogger-Windows-Installer
-          # This path comes from your 'package.json' config
-          path: out/make
+      - name: Verify build
+        run: npm run package # Just verify the build works, don't create installers
